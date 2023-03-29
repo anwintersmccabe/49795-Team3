@@ -12,6 +12,9 @@ cd backend
 flask --app api run
 ```
 The flask app runs locally on the following url & port: http://127.0.0.1:5000
+
+Test the API with postman
+![Screenshot](screenshotpostman.png)
 ## Frontend
 Run frontend with 
 ```
