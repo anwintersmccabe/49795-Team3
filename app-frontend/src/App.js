@@ -10,7 +10,7 @@ import {
   Layout,
   Card
 } from "antd";
-import { UploadOutlined, LoadingOutlined } from "@ant-design/icons";
+import { UploadOutlined } from "@ant-design/icons";
 
 //import "antd/dist/antd.css";
 
@@ -60,44 +60,55 @@ const App = () => {
   };
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#FFF0F5' }}>
-      <Layout style={{ minHeight: '100vh' }}>
-        <Header
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: '#2E7D32',
-          }}
-        >
-          <h1 style={{ color: 'white', margin: 0 }}>Photo to Emotion Generator</h1>
-        </Header>
-        <Content
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '50px',
-          }}
-        >
-          <Dragger {...uploadProps} style={{ width: '100%', maxWidth: '600px', borderColor: '#2E7D32' }}>
-            {file ? (
-              <img
-                src={URL.createObjectURL(file)}
-                alt="preview"
-                style={{ width: '100%', maxHeight: '200px', objectFit: 'contain' }}
-              />
-            ) : (
-              <p>
-                <UploadOutlined style={{ color: '#2E7D32' }} /> Click or drag a photo here to upload
-              </p>
-            )}
-          </Dragger>
-          <Divider />
+    <div
+      style={{
+        minHeight: '100vh',
+        backgroundColor: '#E9F0EB',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+    >
+      <Card
+        title="Photo to Video Generator"
+        style={{
+          width: '80%',
+          backgroundColor: '#FFFFFF',
+          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+          borderRadius: '10px',
+        }}
+        headStyle={{
+          backgroundColor: '#2E7D32',
+          color: 'white',
+          fontSize: '24px',
+          fontWeight: 'bold',
+          textAlign: 'center',
+          borderRadius: '10px 10px 0 0',
+        }}
+        bodyStyle={{
+          display: 'flex',
+          justifyContent: 'space-around',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+        }}
+      >
+        <Dragger {...uploadProps} style={{ width: '250px', borderColor: '#2E7D32' }}>
+          {file ? (
+            <img
+              src={URL.createObjectURL(file)}
+              alt="preview"
+              style={{ width: '100%', maxHeight: '200px', objectFit: 'contain' }}
+            />
+          ) : (
+            <p>
+              <UploadOutlined style={{ color: '#2E7D32' }} /> Upload Photo
+            </p>
+          )}
+        </Dragger>
+        <div>
           <Select
             placeholder="Select an emotion"
-            style={{ width: '100%', maxWidth: '600px', borderColor: '#2E7D32' }}
+            style={{ width: '200px', borderColor: '#2E7D32' }}
             onChange={(value) => setEmotion(value)}
           >
             {emotions.map((emotion) => (
@@ -106,46 +117,31 @@ const App = () => {
               </Option>
             ))}
           </Select>
-          <Divider />
+          <br />
           <Button
             type="primary"
             onClick={processImage}
-            disabled={processing}
+            loading = {processing}
             style={{
-              width: '100%',
-              maxWidth: '600px',
+              width: '200px',
               backgroundColor: '#2E7D32',
               borderColor: '#2E7D32',
+              marginTop: '10px',
             }}
           >
             Generate Video
           </Button>
-          {processing && (
-            <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-              <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} />} />
-              <p>Processing...</p>
-            </div>
-          )}
-          {videoUrl && (
-            <>
-              <Divider />
-              <h2>Generated Video</h2>
-              <video src={videoUrl} width="100%" controls />
-            </>
-          )}
-        </Content>
-        <Footer
-          style={{
-            textAlign: 'center',
-            backgroundColor: '#2E7D32',
-          }}
-        >
-          Photo to Emotion Generator ©2023
-        </Footer>
-      </Layout>
+        </div>
+        {videoUrl && (
+          <>
+            <Divider />
+            <h2>Generated Video</h2>
+            <video src={videoUrl} width="100%" controls />
+          </>
+        )}
+      </Card>
     </div>
-  );
-  
+  );  
 };
 
 export default App;
