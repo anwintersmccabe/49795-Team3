@@ -6,7 +6,7 @@ class ModelUtils:
     @staticmethod
     def generate_video(filename, drivingfilename):
         if "REPLICATE_API_TOKEN" not in os.environ:
-            os.environ["REPLICATE_API_TOKEN"] = "540dbd776678c4756efba5d0f3466ad5102ab2b9"
+            os.environ["REPLICATE_API_TOKEN"] = "c7b6b292173460c80a9db1a45b7ec74c11051406"
         uploaded_filename = filename
         driving_filename = drivingfilename
         print("working...")
