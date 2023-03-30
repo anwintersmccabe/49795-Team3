@@ -2,6 +2,7 @@
 
 ## Backend
 Prerequisite: Python installed, version 3.8.2 or newer
+
 Activate environment with: 
 ```
 cd backend
@@ -18,6 +19,7 @@ Test the API with postman
 ![Screenshot](screenshotpostman.png)
 ## Frontend
 Prerequisite: npm installed
+
 Run frontend with 
 ```
 cd app-frontend
