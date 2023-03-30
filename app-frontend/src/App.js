@@ -51,12 +51,19 @@ const App = () => {
     }
 
     setProcessing(true);
+    let formData = new FormData();
 
-    // Replace this with your logic for processing the image and generating the video
-    setTimeout(() => {
-      setProcessing(false);
-      setVideoUrl("https://example.com/video.mp4");
-    }, 3000);
+    formData.append("file", file);
+
+    const requestOptions = {
+      method: 'POST',
+      body: formData }
+      
+      await fetch('http://127.0.0.1:5000/upload', requestOptions)
+      .then(response => response.json())
+      .then(data => setVideoUrl(data.url))
+      .then(data => setProcessing(false));
+
   };
 
   return (
