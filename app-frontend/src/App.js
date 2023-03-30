@@ -19,13 +19,13 @@ const { Dragger } = Upload;
 const { Header, Content, Footer } = Layout;
 
 const emotions = [
-  "neutral",
+  //"neutral",
   "joy",
-  "sadness",
-  "anger",
-  "surprise",
-  "disgust",
-  "fear",
+  //"sadness",
+  //"anger",
+  //"surprise",
+  //"disgust",
+  //"fear",
 ];
 
 const App = () => {
