@@ -12,6 +12,7 @@ CORS(app)
 @app.route("/upload", methods=['POST'])
 def upload_image():
     if request.method == 'POST':
+        print("here")
         json_data = request.get_json()
         print(json_data)
         #f.save(secure_filename(f.filename))

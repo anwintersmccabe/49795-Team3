@@ -34,12 +34,23 @@ const emotions = [
   //"fear",
 ];
 
+const characters ='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+function generateString(length) {
+    let result = ' ';
+    const charactersLength = characters.length;
+    for ( let i = 0; i < length; i++ ) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+
+    return result;
+}
+let urlToSend = ""
 const App = () => {
   const [file, setFile] = useState(null);
   const [emotion, setEmotion] = useState(null);
   const [processing, setProcessing] = useState(false);
   const [videoUrl, setVideoUrl] = useState(null);
-
   const uploadProps = {
     beforeUpload: (file) => {
       setFile(file);
@@ -60,30 +71,40 @@ const App = () => {
     let formData = new FormData();
 
     formData.append("file", file);
+
+    let fileID = generateString(15) + file.name
+    console.log(fileID)
     
-    const storageRef = ref(storage, `/files/${file.name}`)
+    const storageRef = ref(storage, `/files/${fileID}`)
     const uploadTask = uploadBytesResumable(storageRef, file);
-    let url = ""
     uploadTask.on(
         "state_changed",
         null,
       (err) => console.log(err),
       () => {
       // download url
-      getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-      console.log(url);
-
-      });
-      }
-      ); 
+      getDownloadURL(uploadTask.snapshot.ref).then(async (url) => {
+      urlToSend = url
+      let json = JSON.stringify({"url": urlToSend})
+      console.log(json)
+      console.log(typeof(JSON))
       const requestOptions = {
         method: 'POST',
-        body: JSON.stringify({ "url": url }) }
+        headers: {
+          'Content-Type' : 'application/json'
+          },
+        body: json }
+
         
         await fetch('http://127.0.0.1:8000/upload', requestOptions)
         .then(response => response.json())
         .then(data => setVideoUrl(data.url))
         .then(data => setProcessing(false));
+      });
+
+      }
+      ); 
+      
 
   };
 
