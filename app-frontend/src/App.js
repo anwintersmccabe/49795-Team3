@@ -94,9 +94,15 @@ const App = () => {
           'Content-Type' : 'application/json'
           },
         body: json }
-
-        
-        await fetch('http://127.0.0.1:8000/upload', requestOptions)
+        let backendurl
+        //run on local and deployed
+        if (!process.env.REACT_APP_AI_BACKEND_URL){
+          backendurl = "http://127.0.0.1:8000/upload"
+        }else{
+          backendurl = process.env.REACT_APP_AI_BACKEND_URL+"/upload"
+        }
+        console.log(backendurl)
+        await fetch(backendurl, requestOptions)
         .then(response => response.json())
         .then(data => setVideoUrl(data.url))
         .then(data => setProcessing(false));
