@@ -23,9 +23,9 @@ deactivate
 Run the flask app (API) with: 
 ```
 cd backend
-flask --app api run
+gunicorn api:app
 ```
-The flask app runs locally on the following url & port: http://127.0.0.1:5000
+The flask app runs locally on the following url & port: http://127.0.0.1:8000
 
 Test the API with postman
 ![Screenshot](screenshotpostman.png)
