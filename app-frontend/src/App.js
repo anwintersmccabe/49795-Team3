@@ -11,6 +11,12 @@ import {
   Card
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
+import storage from "./firebaseConfig.js"
+import {
+ ref,
+  uploadBytesResumable,
+  getDownloadURL
+  } from "firebase/storage";
 
 //import "antd/dist/antd.css";
 
@@ -54,15 +60,30 @@ const App = () => {
     let formData = new FormData();
 
     formData.append("file", file);
+    
+    const storageRef = ref(storage, `/files/${file.name}`)
+    const uploadTask = uploadBytesResumable(storageRef, file);
+    let url = ""
+    uploadTask.on(
+        "state_changed",
+        null,
+      (err) => console.log(err),
+      () => {
+      // download url
+      getDownloadURL(uploadTask.snapshot.ref).then((url) => {
+      console.log(url);
 
-    const requestOptions = {
-      method: 'POST',
-      body: formData }
-      
-      await fetch('http://127.0.0.1:5000/upload', requestOptions)
-      .then(response => response.json())
-      .then(data => setVideoUrl(data.url))
-      .then(data => setProcessing(false));
+      });
+      }
+      ); 
+      const requestOptions = {
+        method: 'POST',
+        body: JSON.stringify({ "url": url }) }
+        
+        await fetch('http://127.0.0.1:8000/upload', requestOptions)
+        .then(response => response.json())
+        .then(data => setVideoUrl(data.url))
+        .then(data => setProcessing(false));
 
   };
 
