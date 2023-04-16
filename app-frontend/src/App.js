@@ -11,6 +11,12 @@ import {
   Card
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
+import storage from "./firebaseConfig.js"
+import {
+ ref,
+  uploadBytesResumable,
+  getDownloadURL
+  } from "firebase/storage";
 
 //import "antd/dist/antd.css";
 
@@ -28,12 +34,23 @@ const emotions = [
   //"fear",
 ];
 
+const characters ='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+function generateString(length) {
+    let result = ' ';
+    const charactersLength = characters.length;
+    for ( let i = 0; i < length; i++ ) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+
+    return result;
+}
+let urlToSend = ""
 const App = () => {
   const [file, setFile] = useState(null);
   const [emotion, setEmotion] = useState(null);
   const [processing, setProcessing] = useState(false);
   const [videoUrl, setVideoUrl] = useState(null);
-
   const uploadProps = {
     beforeUpload: (file) => {
       setFile(file);
@@ -55,14 +72,45 @@ const App = () => {
 
     formData.append("file", file);
 
-    const requestOptions = {
-      method: 'POST',
-      body: formData }
+    let fileID = generateString(15) + file.name
+    console.log(fileID)
+    
+    const storageRef = ref(storage, `/files/${fileID}`)
+    const uploadTask = uploadBytesResumable(storageRef, file);
+    uploadTask.on(
+        "state_changed",
+        null,
+      (err) => console.log(err),
+      () => {
+      // download url
+      getDownloadURL(uploadTask.snapshot.ref).then(async (url) => {
+      urlToSend = url
+      let json = JSON.stringify({"url": urlToSend, "emotion_id" : 0})
+      console.log(json)
+      console.log(typeof(JSON))
+      const requestOptions = {
+        method: 'POST',
+        headers: {
+          'Content-Type' : 'application/json'
+          },
+        body: json }
+        let backendurl
+        //run on local and deployed
+        if (!process.env.REACT_APP_AI_BACKEND_URL){
+          backendurl = "http://127.0.0.1:8000/upload"
+        }else{
+          backendurl = process.env.REACT_APP_AI_BACKEND_URL+"/upload"
+        }
+        console.log(backendurl)
+        await fetch(backendurl, requestOptions)
+        .then(response => response.json())
+        .then(data => setVideoUrl(data.url))
+        .then(data => setProcessing(false));
+      });
+
+      }
+      ); 
       
-      await fetch('http://127.0.0.1:5000/upload', requestOptions)
-      .then(response => response.json())
-      .then(data => setVideoUrl(data.url))
-      .then(data => setProcessing(false));
 
   };
 
