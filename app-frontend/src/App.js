@@ -85,7 +85,7 @@ const App = () => {
       // download url
       getDownloadURL(uploadTask.snapshot.ref).then(async (url) => {
       urlToSend = url
-      let json = JSON.stringify({"url": urlToSend})
+      let json = JSON.stringify({"url": urlToSend, "emotion_id" : 0})
       console.log(json)
       console.log(typeof(JSON))
       const requestOptions = {
