@@ -23,7 +23,7 @@ deactivate
 Run the flask app (API) with: 
 ```
 cd backend
-gunicorn api:app
+gunicorn --timeout=0 api:app
 ```
 The flask app runs locally on the following url & port: http://127.0.0.1:8000
 
