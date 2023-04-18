@@ -19,13 +19,13 @@ def upload_image():
         url = json_data["url"]
         emotion_id = json_data["emotion_id"]
         emotion_videos = {
-            0 : "assets/driving_videos/happy.mov",
-            1 : "emotion2 video path here",
-            2 : "emotion3 video path here",
-            3 : "emotion4 video path here",
-            4 : "emotion5 video path here",
-            5 : "emotion6 video path here",
-            6 : "emotion7 video path here"
+            0 : "assets/driving_videos/neutral.mp4",
+            1 : "assets/driving_videos/joy.mov",
+            2 : "assets/driving_videos/sad.mp4",
+            3 : "assets/driving_videos/anger.mp4",
+            4 : "assets/driving_videos/surprise.mp4",
+            5 : "assets/driving_videos/disgust.mp4",
+            6 : "assets/driving_videos/fear.mp4"
         }
         response = requests.get(url)
         buffer = BytesIO(response.content)
