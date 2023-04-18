@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Upload, Button, Select, message, Card } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import { Upload, Button, Select, message, Card, Divider } from "antd";
+import { UploadOutlined, LoadingOutlined } from "@ant-design/icons";
 import storage from "./firebaseConfig.js";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
@@ -41,6 +41,7 @@ const App = () => {
   const [selectedVideoIndex, setSelectedVideoIndex] = useState(null);
   const [userGuess, setUserGuess] = useState(null);
   const [gameResult, setGameResult] = useState(null);
+  const [showNextButton, setShowNextButton] = useState(false);
 
   const uploadProps = {
     beforeUpload: (file) => {
@@ -141,6 +142,32 @@ const App = () => {
 
     return array;
   };
+  const nextVideo = () => {
+    if (selectedVideoIndex < generatedVideos.length - 1) {
+      setSelectedVideoIndex(selectedVideoIndex + 1);
+    } else {
+      setSelectedVideoIndex(0); // Reset the index to 0 for a never-ending loop
+    }
+    setUserGuess(null);
+    setGameResult(null);
+    setShowNextButton(false);
+  };
+
+  const submitAnswer = () => {
+    if (!userGuess) {
+      message.error("Please select an emotion");
+      return;
+    }
+
+    if (userGuess === generatedVideos[selectedVideoIndex].emotion) {
+      setGameResult("Correct!");
+    } else {
+      setGameResult(
+        `Incorrect. The correct answer is ${generatedVideos[selectedVideoIndex].emotion}.`
+      );
+    }
+    setShowNextButton(true);
+  };
 
   return (
     <div
@@ -175,75 +202,45 @@ const App = () => {
           alignItems: "center",
         }}
       >
-        <Dragger
-          {...uploadProps}
-          style={{ width: "250px", borderColor: "#2E7D32" }}
-        >
-          {file ? (
-            <img
-              src={URL.createObjectURL(file)}
-              alt="preview"
-              style={{
-                width: "100%",
-                maxHeight: "200px",
-                objectFit: "contain",
-              }}
-            />
-          ) : (
-            <p>
-              <UploadOutlined style={{ color: "#2E7D32" }} /> Upload Photo
-            </p>
-          )}
-        </Dragger>
-        <Button
-          type="primary"
-          onClick={processImage}
-          disabled={processing}
-          loading={processing}
+        <div
           style={{
-            width: "200px",
-            backgroundColor: "#2E7D32",
-            borderColor: "#2E7D32",
-            marginTop: "10px",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "flex-start",
+            marginBottom: "20px",
           }}
         >
-          Generate Videos
-        </Button>
-        {selectedVideoIndex !== null && (
-          <>
-            <h2>Guess the emotion</h2>
-            <video
-              src={generatedVideos[selectedVideoIndex].url}
-              width="100%"
-              controls
-            />
-            <Select
-              placeholder="Select an emotion"
+          <div>
+            <Dragger
+              {...uploadProps}
               style={{
-                width: "200px",
-                borderColor: "#2E7D32",
-                marginTop: "10px",
+                width: "100%",
+                maxWidth: "600px",
+                borderColor: "#FFB6C1",
               }}
-              onChange={(value) => setUserGuess(value)}
             >
-              {emotions.map((emotion) => (
-                <Option key={emotion} value={emotion}>
-                  {emotion}
-                </Option>
-              ))}
-            </Select>
+              {file ? (
+                <img
+                  src={URL.createObjectURL(file)}
+                  alt="preview"
+                  style={{
+                    width: "100%",
+                    maxHeight: "200px",
+                    objectFit: "contain",
+                  }}
+                />
+              ) : (
+                <p>
+                  <UploadOutlined style={{ color: "#FFB6C1" }} /> Click or drag
+                  a photo here to upload
+                </p>
+              )}
+            </Dragger>
             <Button
               type="primary"
-              onClick={() => {
-                if (userGuess === generatedVideos[selectedVideoIndex].emotion) {
-                  setGameResult("correct");
-                } else {
-                  setGameResult(
-                    `wrong (correct answer: ${generatedVideos[selectedVideoIndex].emotion})`
-                  );
-                }
-              }}
-              disabled={!userGuess}
+              onClick={processImage}
+              disabled={processing}
+              loading={processing}
               style={{
                 width: "200px",
                 backgroundColor: "#2E7D32",
@@ -251,11 +248,63 @@ const App = () => {
                 marginTop: "10px",
               }}
             >
-              Submit
+              Generate Videos
             </Button>
-            {gameResult && <p>Result: {gameResult}</p>}
-          </>
-        )}
+          </div>
+          <Divider
+            type="vertical"
+            style={{ height: "100%", margin: "0 20px" }}
+          />
+          {selectedVideoIndex !== null && (
+            <div>
+              <video
+                src={generatedVideos[selectedVideoIndex].url}
+                controls
+                style={{ height: "200px" }}
+              />
+              <Select
+                value={userGuess}
+                onChange={(value) => setUserGuess(value)}
+                style={{ width: "100%", marginTop: "10px" }}
+              >
+                {emotions.map((emotion) => (
+                  <Option key={emotion} value={emotion}>
+                    {emotion}
+                  </Option>
+                ))}
+              </Select>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginTop: "10px",
+                }}
+              >
+                <Button onClick={submitAnswer} style={{ marginTop: "10px" }}>
+                  Submit
+                </Button>
+                {gameResult && (
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      marginTop: "10px",
+                    }}
+                  >
+                    <h3>{gameResult}</h3>
+                    {showNextButton && (
+                      <Button onClick={nextVideo} style={{ marginTop: "10px" }}>
+                        Next
+                      </Button>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
       </Card>
     </div>
   );
