@@ -58,7 +58,7 @@ const App = () => {
       message.error("Please upload a photo.");
       return;
     }
-
+  
     setProcessing(true);
     const newGeneratedVideos = await generateVideosForAllEmotions(file);
     setGeneratedVideos(shuffle(newGeneratedVideos));
@@ -66,11 +66,12 @@ const App = () => {
     setProcessing(false);
     setUserGuess(null);
     setGameResult(null);
-  };
+  };  
 
   const generateVideosForAllEmotions = async (file) => {
     const generatedVideos = [];
 
+    message.loading({ content: "Generating videos, this may take some time. Please wait...", key: "generateVideos" });
     for (const [index, emotion] of emotions.entries()) {
       let formData = new FormData();
 
@@ -123,6 +124,7 @@ const App = () => {
       generatedVideos.push(videoUrl);
     }
 
+    message.success({ content: "Videos generated successfully!", key: "generateVideos", duration: 2 });
     return generatedVideos;
   };
 
