@@ -166,6 +166,9 @@ const App = () => {
         `Incorrect. The correct answer is ${generatedVideos[selectedVideoIndex].emotion}.`
       );
     }
+    var msg = new SpeechSynthesisUtterance();
+    msg.text = generatedVideos[selectedVideoIndex].emotion;
+    window.speechSynthesis.speak(msg);
     setShowNextButton(true);
   };
 
